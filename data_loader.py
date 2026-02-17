@@ -65,11 +65,20 @@ class DataLoader:
         self.pipeline = joblib.load(filepath)
         print(f"Pipeline loaded from {filepath}")
 
-def sliding_window_stream(data, window_size=1, batch_size=32):
+def sliding_window_stream(data, window_size=10, stride=1, batch_size=None):
     """
-    Simulates a stream of data.
-    Yields batches of data.
+    Simulates a stream of data using a sliding window.
+    Yields windows of data.
+    
+    Args:
+        data: input data (numpy array)
+        window_size: size of each window
+        stride: step size to move the window
+        batch_size: (deprecated) kept for compatibility, usage replaced by window_size
     """
     num_samples = data.shape[0]
-    for i in range(0, num_samples, batch_size):
-        yield data[i:i + batch_size]
+    
+    # Iterate through the data with the given stride
+    for i in range(0, num_samples - window_size + 1, stride):
+        # Yield the current window
+        yield data[i:i + window_size]

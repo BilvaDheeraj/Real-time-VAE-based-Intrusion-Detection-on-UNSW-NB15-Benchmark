@@ -104,7 +104,8 @@ if train_btn:
             model = train_model(model, X_train, epochs=epochs)
             
             st.session_state.model = model
-            st.success("Model Training Completed!")
+            st.session_state.model = model
+            st.success(f"Model Training Completed! (Epochs: {epochs}, Latent Dim: {latent_dim})")
             
             # Determine Threshold (95th percentile on train set reconstruction)
             model.eval()
@@ -126,7 +127,9 @@ if st.session_state.model is not None and st.session_state.X_test is not None:
         inference_engine = InferenceEngine(st.session_state.model, st.session_state.threshold)
         
         # Prepare Streaming
-        stream = sliding_window_stream(st.session_state.X_test, window_size=window_size, batch_size=10) # process in small batches
+        # Prepare Streaming
+        # Use stride and window_size from sidebar
+        stream = sliding_window_stream(st.session_state.X_test, window_size=window_size, stride=stride)
         
         # Containers for plots
         chart_window = st.empty()
